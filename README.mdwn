@@ -9,6 +9,10 @@ to the normal distribution and the parameters can be tweaked separately
 
 ![example.png](https://github.com/williamholland/bubble_coaster/blob/master/images/example.png)
 
+## Requires
+
+* [svgwrite](https://pypi.python.org/pypi/svgwrite/).
+
 ## Usage
 
         python bubble_coaster.py
