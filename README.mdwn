@@ -7,7 +7,7 @@ and the gaps between them are filled with smaller bubbles so this script has
 the concept of `small_bubbles` and `large_bubbles`. These are generated according
 to the normal distribution and the parameters can be tweaked separately
 
-![alt tag](https://github.com/williamholland/bubble_coaster/blob/master/images/example.svg)
+![example.png](https://github.com/williamholland/bubble_coaster/blob/master/images/example.png)
 
 ## Usage
 
