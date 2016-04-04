@@ -1,0 +1,16 @@
+# Bubble Coaster
+
+This script was written to generate an svg for a drinks coaster with a bubble
+design. It randomly places bubbles of random sizes within the coaster circle.
+I noticed while observing bubbles in foam that there tend to be large bubbles
+and the gaps between them are filled with smaller bubbles so this script has
+the concept of `small_bubbles` and `large_bubbles`. These are generated according
+to the normal distribution and the parameters can be tweaked separately
+
+![alt tag](https://github.com/williamholland/bubble_coaster/blob/master/images/example.svg)
+
+## Usage
+
+        python bubble_coaster.py
+        python bubble_coaster.py out.svg
+        python bubble_coaster.py out.svg default.cfg
