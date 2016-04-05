@@ -63,13 +63,13 @@ def boxmuller(mu,sigma):
 
     return x2
 
-def add_circle(dwg,radius,center,fill='none'):
+def add_circle(dwg,radius,center,stroke='black',fill='none'):
     ''' add a circle to Drawing '''
     circle1 = dwg.circle(
                          center = center,
                          r = radius,
                          fill = fill,
-                         stroke = 'black',
+                         stroke = stroke,
                          stroke_width = 1,
         )
     dwg.add(circle1)
@@ -86,16 +86,18 @@ class BubbleContainer:
     def __len__(self):
         return len(self.container)
 
-    def new_bubble(self,dwg,bubble_size_dict):
+    def new_bubble(self,dwg,bubble_dict):
         # TODO x, y don't need to be int
         x = 2*coaster_radius*random()
         y = 2*coaster_radius*random()
         r = 0
-        m = bubble_size_dict["mean"]
-        s = bubble_size_dict["deviation"]
+        m = bubble_dict["mean"]
+        s = bubble_dict["deviation"]
+        stroke = bubble_dict["stroke"]
+        fill = bubble_dict["fill"]
         while r < min_bubble_size or m - s < r < m + s:
             r = boxmuller(m,s)
-        bubble = Bubble(r,x,y)
+        bubble = Bubble(r,x,y,stroke,fill)
         if bubble.in_valid_place():
             self.container.append(bubble)
 
@@ -103,15 +105,22 @@ bubble_container = BubbleContainer()
 
 class Bubble:
     ''' A bubble is a circle with radius and center (x,y) all in mm '''
-    def __init__(self,radius,x,y):
+    def __init__(self,radius,x,y,stroke='black',fill='none'):
         self.radius = radius
         self.x = x
         self.y = y
+        self.stroke = stroke
+        self.fill = fill
         self.center = (x,y)
 
     def add(self,dwg):
         ''' add this to the Drawing dwg'''
-        add_circle(dwg,self.radius*mm,(self.x*mm,self.y*mm))
+        add_circle(dwg,
+                   self.radius*mm,
+                   (self.x*mm,self.y*mm),
+                   self.stroke,
+                   self.fill
+            )
 
     def in_coaster(self):
         ''' True if this is completely within the coaster and clear of the
@@ -193,13 +202,21 @@ if __name__ == '__main__':
     coaster_radius = config.getfloat('Coaster', 'radius')
     coaster_boarder = config.getfloat('Coaster', 'boarder')
     min_bubble_gap = config.getfloat('Bubbles', 'min_gap')
+    small_bubble_stroke = config.get('Bubbles', 'small_bubble.stroke')
+    small_bubble_fill = config.get('Bubbles', 'small_bubble.fill')
     small_bubble = {
         "mean" : config.getfloat('Bubbles', 'small_bubble.mean'),
-        "deviation" : config.getfloat('Bubbles', 'small_bubble.deviation')
+        "deviation" : config.getfloat('Bubbles', 'small_bubble.deviation'),
+        "stroke" : small_bubble_stroke,
+        "fill" : small_bubble_fill
     }
+    large_bubble_stroke = config.get('Bubbles', 'large_bubble.stroke')
+    large_bubble_fill = config.get('Bubbles', 'large_bubble.fill')
     large_bubble = {
         "mean" : config.getfloat('Bubbles', 'large_bubble.mean'),
-        "deviation" : config.getfloat('Bubbles', 'large_bubble.deviation')
+        "deviation" : config.getfloat('Bubbles', 'large_bubble.deviation'),
+        "stroke" : large_bubble_stroke,
+        "fill" : large_bubble_fill
     }
     min_bubble_size = config.getfloat('Bubbles', 'min_size')
     max_large_bubbles = config.getfloat('Bubbles', 'max_large_bubbles')
