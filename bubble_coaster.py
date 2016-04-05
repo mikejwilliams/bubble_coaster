@@ -136,35 +136,35 @@ def main():
     ''' Create a coaster and fill it with bubbles '''
     import time
     dwg = svgwrite.Drawing(filename, drawing_size)
-    print "Creating coaster ... ",
+    sys.stdout.write("Creating coaster ... ")
     sys.stdout.flush()
     add_circle(dwg,
                radius = coaster_radius*mm,
                center = (coaster_radius*mm,coaster_radius*mm)
         )
-    print "done"
+    sys.stdout.write("done\n")
     timeout_at = time.time() + timeout
-    print "Placing large bubbles ... ",
+    sys.stdout.write("Placing large bubbles ... ")
     sys.stdout.flush()
     while len(bubble_container) < max_large_bubbles and time.time() < timeout_at:
         bubble_container.new_bubble(dwg,large_bubble)
     timeout_at = time.time() + timeout
-    print "done"
-    print "Filling gaps with small bubbles ... ",
+    sys.stdout.write("done\n")
+    sys.stdout.write("Filling gaps with small bubbles ... ")
     sys.stdout.flush()
     while time.time() < timeout_at:
         bubble_container.new_bubble(dwg,small_bubble)
-    print "done"
-    print "Drawing ... ",
+    sys.stdout.write("done\n")
+    sys.stdout.write("Drawing ... ")
     sys.stdout.flush()
     for b in bubble_container:
         b.add(dwg)
-    print "done"
+    sys.stdout.write("done\n")
         
-    print "Saving ... ",
+    sys.stdout.write("Saving ... ")
     sys.stdout.flush()
     dwg.save()
-    print "done"
+    sys.stdout.write("done\n")
 
 if __name__ == '__main__':
     import os
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     except:
         filename = "out.svg"
     if os.path.exists(filename):
-        print "File %s exists" % filename
+        sys.stdout.write("File %s exists\n" % filename)
         sys.exit(1)
 
     try:
@@ -202,5 +202,5 @@ if __name__ == '__main__':
     drawing_size = (2*coaster_radius*mm,2*coaster_radius*mm)
 
     main()
-    print "File written to %s" % filename
+    sys.stdout.write("File written to %s\n" % filename)
     os.system("xdg-open %s &" % filename)
