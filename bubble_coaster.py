@@ -95,7 +95,7 @@ class BubbleContainer:
         s = bubble_dict["deviation"]
         stroke = bubble_dict["stroke"]
         fill = bubble_dict["fill"]
-        while r < min_bubble_size or m - s < r < m + s:
+        while r < min_bubble_size or max_bubble_size < r:
             r = boxmuller(m,s)
         bubble = Bubble(r,x,y,stroke,fill)
         if bubble.in_valid_place():
@@ -219,6 +219,7 @@ if __name__ == '__main__':
         "fill" : large_bubble_fill
     }
     min_bubble_size = config.getfloat('Bubbles', 'min_size')
+    max_bubble_size = config.getfloat('Bubbles', 'max_size')
     max_large_bubbles = config.getfloat('Bubbles', 'max_large_bubbles')
     timeout = config.getint('Bubbles', 'timeout')
     coaster_center = (coaster_radius, coaster_radius)
