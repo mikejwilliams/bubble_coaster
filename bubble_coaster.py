@@ -164,12 +164,14 @@ def main():
     while len(bubble_container) < max_large_bubbles and time.time() < timeout_at:
         bubble_container.new_bubble(dwg,large_bubble)
     timeout_at = time.time() + timeout
-    sys.stdout.write("done\n")
+    num_large_bubbles = len(bubble_container)
+    sys.stdout.write("placed %s large bubbles\n" % num_large_bubbles)
     sys.stdout.write("Filling gaps with small bubbles ... ")
     sys.stdout.flush()
-    while time.time() < timeout_at:
+    while len(bubble_container) - num_large_bubbles < max_small_bubbles and time.time() < timeout_at:
         bubble_container.new_bubble(dwg,small_bubble)
-    sys.stdout.write("done\n")
+    num_small_bubbles = len(bubble_container) - num_large_bubbles
+    sys.stdout.write("placed %s small bubbles\n" % num_small_bubbles)
     sys.stdout.write("Drawing ... ")
     sys.stdout.flush()
     for b in bubble_container:
@@ -221,6 +223,7 @@ if __name__ == '__main__':
     min_bubble_size = config.getfloat('Bubbles', 'min_size')
     max_bubble_size = config.getfloat('Bubbles', 'max_size')
     max_large_bubbles = config.getfloat('Bubbles', 'max_large_bubbles')
+    max_small_bubbles = config.getfloat('Bubbles', 'max_small_bubbles')
     timeout = config.getint('Bubbles', 'timeout')
     coaster_center = (coaster_radius, coaster_radius)
     drawing_size = (2*coaster_radius*mm,2*coaster_radius*mm)
