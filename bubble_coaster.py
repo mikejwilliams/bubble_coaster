@@ -26,8 +26,11 @@
 # the concept of small_bubbles and large_bubbles. These are generated according
 # to the normal distribution and the parameters can be tweaked separately
 
+from math import log
+from math import sin
+from math import cos
 from math import sqrt
-from numpy.random import normal
+from math import pi
 from random import random
 from svgwrite import mm
 import ConfigParser
@@ -38,6 +41,21 @@ import svgwrite
 def distance(a,b):
     ''' return the euclidean distance between points a and b in 2D space '''
     return sqrt( (a[0] - b[0])**2 + (a[1] - b[1])**2 )
+
+def boxmuller(mu,sigma):
+    ''' A transformation which transforms from a two-dimensional continuous
+        uniform distribution to a two-dimensional bivariate normal distribution
+    '''
+    u = random()
+    v = random()
+
+    z1 = sqrt(-2 * log(u)) * sin(2 * pi * v)
+    z2 = sqrt(-2 * log(u)) * cos(2 * pi * v)
+
+    x1 = mu + z1 * sigma
+    x2 = mu + z2 * sigma
+
+    return x2
 
 def add_circle(dwg,radius,center,fill='none'):
     ''' add a circle to Drawing '''
@@ -70,7 +88,7 @@ class BubbleContainer:
         m = bubble_size_dict["mean"]
         s = bubble_size_dict["deviation"]
         while r < min_bubble_size or m - s < r < m + s:
-            r = normal(m,s)
+            r = boxmuller(m,s)
         bubble = Bubble(r,x,y)
         if bubble.in_valid_place():
             self.container.append(bubble)
