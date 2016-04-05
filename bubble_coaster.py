@@ -26,15 +26,21 @@
 # the concept of small_bubbles and large_bubbles. These are generated according
 # to the normal distribution and the parameters can be tweaked separately
 
-from math import log
-from math import sin
 from math import cos
-from math import sqrt
+from math import log
 from math import pi
+from math import sin
+from math import sqrt
 from random import random
 from svgwrite import mm
-import ConfigParser
 import sys
+
+if sys.version_info >= (3, 0):
+    # if python 3.x
+    from configparser import RawConfigParser
+else:
+    # if python 2.x
+    from ConfigParser import RawConfigParser
 
 import svgwrite
 
@@ -181,7 +187,7 @@ if __name__ == '__main__':
     except:
         cfgfile = "default.cfg"
 
-    config = ConfigParser.RawConfigParser()
+    config = RawConfigParser()
     config.read(cfgfile)
 
     coaster_radius = config.getfloat('Coaster', 'radius')
