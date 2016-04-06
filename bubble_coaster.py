@@ -87,7 +87,6 @@ class BubbleContainer:
         return len(self.container)
 
     def new_bubble(self,dwg,bubble_dict):
-        # TODO x, y don't need to be int
         x = 2*coaster_radius*random()
         y = 2*coaster_radius*random()
         r = 0
