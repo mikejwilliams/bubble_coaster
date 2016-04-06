@@ -94,8 +94,12 @@ class BubbleContainer:
         s = bubble_dict["deviation"]
         stroke = bubble_dict["stroke"]
         fill = bubble_dict["fill"]
-        while r < min_bubble_size or max_bubble_size < r:
-            r = boxmuller(m,s)
+        if max_bubble_size == -1:
+            while r < min_bubble_size:
+                r = boxmuller(m,s)
+        else:
+            while r < min_bubble_size or max_bubble_size < r:
+                r = boxmuller(m,s)
         bubble = Bubble(r,x,y,stroke,fill)
         if bubble.in_valid_place():
             self.container.append(bubble)
@@ -160,15 +164,35 @@ def main():
     timeout_at = time.time() + timeout
     sys.stdout.write("Placing large bubbles ... ")
     sys.stdout.flush()
-    while len(bubble_container) < max_large_bubbles and time.time() < timeout_at:
-        bubble_container.new_bubble(dwg,large_bubble)
+    if timeout == -1:
+        while True:
+            bubble_container.new_bubble(dwg,large_bubble)
+            if max_large_bubbles != -1:
+                if len(bubble_container) >= max_large_bubbles:
+                    break
+    else:
+        while time.time() < timeout_at:
+            bubble_container.new_bubble(dwg,large_bubble)
+            if max_large_bubbles != -1:
+                if len(bubble_container) >= max_large_bubbles:
+                    break
     timeout_at = time.time() + timeout
     num_large_bubbles = len(bubble_container)
     sys.stdout.write("placed %s large bubbles\n" % num_large_bubbles)
     sys.stdout.write("Filling gaps with small bubbles ... ")
     sys.stdout.flush()
-    while len(bubble_container) - num_large_bubbles < max_small_bubbles and time.time() < timeout_at:
-        bubble_container.new_bubble(dwg,small_bubble)
+    if timeout == -1:
+        while True:
+            bubble_container.new_bubble(dwg,small_bubble)
+            if max_small_bubbles != -1:
+                if len(bubble_container) >= max_small_bubbles:
+                    break
+    else:
+        while time.time() < timeout_at:
+            bubble_container.new_bubble(dwg,small_bubble)
+            if max_small_bubbles != -1:
+                if len(bubble_container) >= max_small_bubbles:
+                    break
     num_small_bubbles = len(bubble_container) - num_large_bubbles
     sys.stdout.write("placed %s small bubbles\n" % num_small_bubbles)
     sys.stdout.write("Drawing ... ")
