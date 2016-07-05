@@ -54,6 +54,10 @@ else:
     # if python 2.x
     from ConfigParser import RawConfigParser
 
+def help(_exit=0):
+    sys.stdout.write("usage: git [-h] [-c <config file path>] [<output file path>]\n")
+    sys.exit(_exit)
+
 def distance(a,b):
     ''' return the euclidean distance between points a and b in 2D space '''
     return sqrt( (a[0] - b[0])**2 + (a[1] - b[1])**2 )
@@ -213,15 +217,18 @@ if __name__ == '__main__':
     import os
     import getopt
 
-    optlist, args = getopt.getopt(sys.argv[1:], 'c:')
+    optlist, args = getopt.getopt(sys.argv[1:], 'hc:')
 
     arg_dict = {}
     for opt in optlist:
         arg_dict[opt[0]] = opt[1]
 
+    if ('-h','') in optlist:
+        help(0)
+
     if len(args) > 1:
         sys.stdout.write("Too many arguments provided\n")
-        sys.exit(1)
+        help(1)
     elif len(args) < 1:
         filename = "out.svg"
         counter = 0
