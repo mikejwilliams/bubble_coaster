@@ -54,6 +54,10 @@ else:
     # if python 2.x
     from ConfigParser import RawConfigParser
 
+def help(_exit=0):
+    sys.stdout.write("usage: git [-h] [-c <config file path>] [<output file path>]\n")
+    sys.exit(_exit)
+
 def distance(a,b):
     ''' return the euclidean distance between points a and b in 2D space '''
     return sqrt( (a[0] - b[0])**2 + (a[1] - b[1])**2 )
@@ -211,18 +215,33 @@ def main():
 
 if __name__ == '__main__':
     import os
-    try:
-        filename = sys.argv[1]
-    except:
-        filename = "out.svg"
-    if os.path.exists(filename):
-        sys.stdout.write("File %s exists\n" % filename)
-        sys.exit(1)
+    import getopt
 
-    try:
-        cfgfile = sys.argv[2]
-    except:
-        cfgfile = "default.cfg"
+    optlist, args = getopt.getopt(sys.argv[1:], 'hc:')
+
+    arg_dict = {}
+    for opt in optlist:
+        arg_dict[opt[0]] = opt[1]
+
+    if ('-h','') in optlist:
+        help(0)
+
+    if len(args) > 1:
+        sys.stdout.write("Too many arguments provided\n")
+        help(1)
+    elif len(args) < 1:
+        filename = "out.svg"
+        counter = 0
+        while os.path.exists(filename):
+            counter += 1
+            filename = "out_%s.svg" % counter
+    else:
+        filename = args[0]
+        if os.path.exists(filename):
+            sys.stdout.write("File %s exists\n" % filename)
+            sys.exit(1)
+
+    cfgfile = arg_dict.get('-c',"default.cfg")
 
     outfile = open(filename,"w")
     svg_version=1.1
