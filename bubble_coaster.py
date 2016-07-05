@@ -219,13 +219,20 @@ if __name__ == '__main__':
     for opt in optlist:
         arg_dict[opt[0]] = opt[1]
 
-    try:
-        filename = args[0]
-    except:
-        filename = "out.svg"
-    if os.path.exists(filename):
-        sys.stdout.write("File %s exists\n" % filename)
+    if len(args) > 1:
+        sys.stdout.write("Too many arguments provided\n")
         sys.exit(1)
+    elif len(args) < 1:
+        filename = "out.svg"
+        counter = 0
+        while os.path.exists(filename):
+            counter += 1
+            filename = "out_%s.svg" % counter
+    else:
+        filename = args[0]
+        if os.path.exists(filename):
+            sys.stdout.write("File %s exists\n" % filename)
+            sys.exit(1)
 
     cfgfile = arg_dict.get('-c',"default.cfg")
 
