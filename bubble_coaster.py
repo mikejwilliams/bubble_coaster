@@ -211,18 +211,23 @@ def main():
 
 if __name__ == '__main__':
     import os
+    import getopt
+
+    optlist, args = getopt.getopt(sys.argv[1:], 'c:')
+
+    arg_dict = {}
+    for opt in optlist:
+        arg_dict[opt[0]] = opt[1]
+
     try:
-        filename = sys.argv[1]
+        filename = args[0]
     except:
         filename = "out.svg"
     if os.path.exists(filename):
         sys.stdout.write("File %s exists\n" % filename)
         sys.exit(1)
 
-    try:
-        cfgfile = sys.argv[2]
-    except:
-        cfgfile = "default.cfg"
+    cfgfile = arg_dict.get('-c',"default.cfg")
 
     outfile = open(filename,"w")
     svg_version=1.1
