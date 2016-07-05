@@ -15,3 +15,9 @@ tweaked separately.
         python bubble_coaster.py
         python bubble_coaster.py out.svg
         python bubble_coaster.py out.svg default.cfg
+
+I used `bubble_coaster.py` to generate svg files which were cut using a laser
+CNC machine at [HacMAN](https://hacman.org.uk/) to produce a physical drinks
+coasters.
+
+![cut_example.jpg](https://github.com/williamholland/bubble_coaster/blob/master/images/cut_example.jpg)
