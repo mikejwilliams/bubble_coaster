@@ -54,8 +54,6 @@ else:
     # if python 2.x
     from ConfigParser import RawConfigParser
 
-import svgwrite
-
 def distance(a,b):
     ''' return the euclidean distance between points a and b in 2D space '''
     return sqrt( (a[0] - b[0])**2 + (a[1] - b[1])**2 )
@@ -75,16 +73,11 @@ def boxmuller(mu,sigma):
 
     return x2
 
-def add_circle(dwg,radius,center,stroke='black',fill='none'):
+def add_circle(radius,center,stroke='black',fill='none'):
     ''' add a circle to Drawing '''
-    circle1 = dwg.circle(
-                         center = center,
-                         r = radius,
-                         fill = fill,
-                         stroke = stroke,
-                         stroke_width = 1,
-        )
-    dwg.add(circle1)
+    stroke_width = 1
+    outfile.write('<circle cx="%s" cy="%s" r="%s" fill="%s" stroke="%s" stroke-width="%s"/>' % (center[0],center[1],radius,fill,stroke,stroke_width))
+    outfile.write('\n')
 
 class BubbleContainer:
     ''' Contains bubbles '''
@@ -98,7 +91,7 @@ class BubbleContainer:
     def __len__(self):
         return len(self.container)
 
-    def new_bubble(self,dwg,bubble_dict):
+    def new_bubble(self,bubble_dict):
         x = 2*coaster_radius*random()
         y = 2*coaster_radius*random()
         r = 0
@@ -128,9 +121,9 @@ class Bubble:
         self.fill = fill
         self.center = (x,y)
 
-    def add(self,dwg):
-        ''' add this to the Drawing dwg'''
-        add_circle(dwg,
+    def add(self):
+        ''' add this to the svg'''
+        add_circle(
                    self.radius*mm,
                    (self.x*mm,self.y*mm),
                    self.stroke,
@@ -165,10 +158,9 @@ class Bubble:
 def main():
     ''' Create a coaster and fill it with bubbles '''
     import time
-    dwg = svgwrite.Drawing(filename, drawing_size)
     sys.stdout.write("Creating coaster ... ")
     sys.stdout.flush()
-    add_circle(dwg,
+    add_circle(
                radius = coaster_radius*mm,
                center = (coaster_radius*mm,coaster_radius*mm)
         )
@@ -178,13 +170,13 @@ def main():
     sys.stdout.flush()
     if timeout == -1:
         while True:
-            bubble_container.new_bubble(dwg,large_bubble)
+            bubble_container.new_bubble(large_bubble)
             if max_large_bubbles != -1:
                 if len(bubble_container) >= max_large_bubbles:
                     break
     else:
         while time.time() < timeout_at:
-            bubble_container.new_bubble(dwg,large_bubble)
+            bubble_container.new_bubble(large_bubble)
             if max_large_bubbles != -1:
                 if len(bubble_container) >= max_large_bubbles:
                     break
@@ -195,13 +187,13 @@ def main():
     sys.stdout.flush()
     if timeout == -1:
         while True:
-            bubble_container.new_bubble(dwg,small_bubble)
+            bubble_container.new_bubble(small_bubble)
             if max_small_bubbles != -1:
                 if len(bubble_container) >= max_small_bubbles:
                     break
     else:
         while time.time() < timeout_at:
-            bubble_container.new_bubble(dwg,small_bubble)
+            bubble_container.new_bubble(small_bubble)
             if max_small_bubbles != -1:
                 if len(bubble_container) >= max_small_bubbles:
                     break
@@ -210,12 +202,11 @@ def main():
     sys.stdout.write("Drawing ... ")
     sys.stdout.flush()
     for b in bubble_container:
-        b.add(dwg)
+        b.add()
     sys.stdout.write("done\n")
         
     sys.stdout.write("Saving ... ")
     sys.stdout.flush()
-    dwg.save()
     sys.stdout.write("done\n")
 
 if __name__ == '__main__':
@@ -232,6 +223,9 @@ if __name__ == '__main__':
         cfgfile = sys.argv[2]
     except:
         cfgfile = "default.cfg"
+
+    outfile = open(filename,"w")
+    svg_version=1.1
 
     config = RawConfigParser()
     config.read(cfgfile)
@@ -263,6 +257,12 @@ if __name__ == '__main__':
     coaster_center = (coaster_radius, coaster_radius)
     drawing_size = (2*coaster_radius*mm,2*coaster_radius*mm)
 
+    outfile.write('<?xml version="1.0"?>')
+    outfile.write('<svg width="%s" height="%s" version="%s">\n' % (drawing_size[0], drawing_size[1],svg_version))
+
     main()
+
+    outfile.write('</svg>\n')
+    outfile.close()
     sys.stdout.write("File written to %s\n" % filename)
     os.system("xdg-open %s &" % filename)
