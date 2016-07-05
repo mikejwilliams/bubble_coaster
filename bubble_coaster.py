@@ -32,8 +32,20 @@ from math import pi
 from math import sin
 from math import sqrt
 from random import random
-from svgwrite import mm
 import sys
+
+from numbers import Number
+
+class Mm:
+    def __mul__(self, other):
+        if isinstance(other,Number):
+            return "%smm" % other
+        raise TypeError("Tried to apply mm to a non-number")
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+mm = Mm()
 
 if sys.version_info >= (3, 0):
     # if python 3.x
