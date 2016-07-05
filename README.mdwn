@@ -12,9 +12,15 @@ tweaked separately.
 
 ## Usage
 
+        usage: git [-h] [-c <config file path>] [<output file path>]
+
+Output file defaults to `out.svg` and config file defaults to `default.cfg`.
+
+### Example Usage
+
         python bubble_coaster.py
-        python bubble_coaster.py out.svg
-        python bubble_coaster.py out.svg default.cfg
+        python bubble_coaster.py my_out.svg
+        python bubble_coaster.py -c my_config.cfg out.svg
 
 I used `bubble_coaster.py` to generate svg files which were cut using a laser
 CNC machine at [HacMAN](https://hacman.org.uk/) to produce a physical drinks
