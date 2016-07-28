@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-  
+
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-  
+
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,16 +29,16 @@
 from math import cos
 from math import log
 from math import pi
-from math import sin
 from math import sqrt
 from random import random
 import sys
 
 from numbers import Number
 
+
 class Mm:
     def __mul__(self, other):
-        if isinstance(other,Number):
+        if isinstance(other, Number):
             return "%smm" % other
         raise TypeError("Tried to apply mm to a non-number")
 
@@ -54,34 +54,40 @@ else:
     # if python 2.x
     from ConfigParser import RawConfigParser
 
+
 def help(_exit=0):
-    sys.stdout.write("usage: git [-h] [-c <config file path>] [<output file path>]\n")
+    sys.stdout.write("usage: git [-h] [-c <config file path>] " +
+                     "[<output file path>]\n")
     sys.exit(_exit)
 
-def distance(a,b):
-    ''' return the euclidean distance between points a and b in 2D space '''
-    return sqrt( (a[0] - b[0])**2 + (a[1] - b[1])**2 )
 
-def boxmuller(mu,sigma):
+def distance(a, b):
+    ''' return the euclidean distance between points a and b in 2D space '''
+    return sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+
+
+def boxmuller(mu, sigma):
     ''' A transformation which transforms from a two-dimensional continuous
-        uniform distribution to a two-dimensional bivariate normal distribution
+        uniform distribution to a normal distribution
     '''
     u = random()
     v = random()
 
-    z1 = sqrt(-2 * log(u)) * sin(2 * pi * v)
-    z2 = sqrt(-2 * log(u)) * cos(2 * pi * v)
+    z = sqrt(-2 * log(u)) * cos(2 * pi * v)
 
-    x1 = mu + z1 * sigma
-    x2 = mu + z2 * sigma
+    x = mu + z * sigma
 
-    return x2
+    return x
 
-def add_circle(radius,center,stroke='black',fill='none'):
+
+def add_circle(radius, center, stroke='black', fill='none'):
     ''' add a circle to Drawing '''
     stroke_width = 1
-    outfile.write('<circle cx="%s" cy="%s" r="%s" fill="%s" stroke="%s" stroke-width="%s"/>' % (center[0],center[1],radius,fill,stroke,stroke_width))
+    outfile.write('<circle cx="%s" cy="%s" r="%s" fill="%s" stroke="%s" ' %
+                  (center[0], center[1], radius, fill, stroke) +
+                  'stroke-width="%s"/>' % (stroke_width))
     outfile.write('\n')
+
 
 class BubbleContainer:
     ''' Contains bubbles '''
@@ -95,7 +101,7 @@ class BubbleContainer:
     def __len__(self):
         return len(self.container)
 
-    def new_bubble(self,bubble_dict):
+    def new_bubble(self, bubble_dict):
         x = 2*coaster_radius*random()
         y = 2*coaster_radius*random()
         r = 0
@@ -105,31 +111,32 @@ class BubbleContainer:
         fill = bubble_dict["fill"]
         if max_bubble_size == -1:
             while r < min_bubble_size:
-                r = boxmuller(m,s)
+                r = boxmuller(m, s)
         else:
             while r < min_bubble_size or max_bubble_size < r:
-                r = boxmuller(m,s)
-        bubble = Bubble(r,x,y,stroke,fill)
+                r = boxmuller(m, s)
+        bubble = Bubble(r, x, y, stroke, fill)
         if bubble.in_valid_place():
             self.container.append(bubble)
 
 bubble_container = BubbleContainer()
 
+
 class Bubble:
     ''' A bubble is a circle with radius and center (x,y) all in mm '''
-    def __init__(self,radius,x,y,stroke='black',fill='none'):
+    def __init__(self, radius, x, y, stroke='black', fill='none'):
         self.radius = radius
         self.x = x
         self.y = y
         self.stroke = stroke
         self.fill = fill
-        self.center = (x,y)
+        self.center = (x, y)
 
     def add(self):
         ''' add this to the svg'''
         add_circle(
                    self.radius*mm,
-                   (self.x*mm,self.y*mm),
+                   (self.x*mm, self.y*mm),
                    self.stroke,
                    self.fill
             )
@@ -142,10 +149,10 @@ class Bubble:
             return False
         return True
 
-    def too_close(self,bubble):
+    def too_close(self, bubble):
         ''' True if this is too close to another bubble, ie overlapping or
             within min_bubble_gap of it '''
-        dist = distance(self.center,bubble.center)
+        dist = distance(self.center, bubble.center)
         if dist < self.radius + bubble.radius + min_bubble_gap:
             return True
         return False
@@ -159,14 +166,15 @@ class Bubble:
                 return False
         return True
 
+
 def main():
     ''' Create a coaster and fill it with bubbles '''
     import time
     sys.stdout.write("Creating coaster ... ")
     sys.stdout.flush()
     add_circle(
-               radius = coaster_radius*mm,
-               center = (coaster_radius*mm,coaster_radius*mm)
+               radius=coaster_radius*mm,
+               center=(coaster_radius*mm, coaster_radius*mm)
         )
     sys.stdout.write("done\n")
     timeout_at = time.time() + timeout
@@ -208,7 +216,7 @@ def main():
     for b in bubble_container:
         b.add()
     sys.stdout.write("done\n")
-        
+
     sys.stdout.write("Saving ... ")
     sys.stdout.flush()
     sys.stdout.write("done\n")
@@ -223,7 +231,7 @@ if __name__ == '__main__':
     for opt in optlist:
         arg_dict[opt[0]] = opt[1]
 
-    if ('-h','') in optlist:
+    if ('-h', '') in optlist:
         help(0)
 
     if len(args) > 1:
@@ -241,10 +249,10 @@ if __name__ == '__main__':
             sys.stdout.write("File %s exists\n" % filename)
             sys.exit(1)
 
-    cfgfile = arg_dict.get('-c',"default.cfg")
+    cfgfile = arg_dict.get('-c', "default.cfg")
 
-    outfile = open(filename,"w")
-    svg_version=1.1
+    outfile = open(filename, "w")
+    svg_version = 1.1
 
     config = RawConfigParser()
     config.read(cfgfile)
@@ -255,18 +263,18 @@ if __name__ == '__main__':
     small_bubble_stroke = config.get('Bubbles', 'small_bubble.stroke')
     small_bubble_fill = config.get('Bubbles', 'small_bubble.fill')
     small_bubble = {
-        "mean" : config.getfloat('Bubbles', 'small_bubble.mean'),
-        "deviation" : config.getfloat('Bubbles', 'small_bubble.deviation'),
-        "stroke" : small_bubble_stroke,
-        "fill" : small_bubble_fill
+        "mean": config.getfloat('Bubbles', 'small_bubble.mean'),
+        "deviation": config.getfloat('Bubbles', 'small_bubble.deviation'),
+        "stroke": small_bubble_stroke,
+        "fill": small_bubble_fill
     }
     large_bubble_stroke = config.get('Bubbles', 'large_bubble.stroke')
     large_bubble_fill = config.get('Bubbles', 'large_bubble.fill')
     large_bubble = {
-        "mean" : config.getfloat('Bubbles', 'large_bubble.mean'),
-        "deviation" : config.getfloat('Bubbles', 'large_bubble.deviation'),
-        "stroke" : large_bubble_stroke,
-        "fill" : large_bubble_fill
+        "mean": config.getfloat('Bubbles', 'large_bubble.mean'),
+        "deviation": config.getfloat('Bubbles', 'large_bubble.deviation'),
+        "stroke": large_bubble_stroke,
+        "fill": large_bubble_fill
     }
     min_bubble_size = config.getfloat('Bubbles', 'min_size')
     max_bubble_size = config.getfloat('Bubbles', 'max_size')
@@ -274,10 +282,11 @@ if __name__ == '__main__':
     max_small_bubbles = config.getfloat('Bubbles', 'max_small_bubbles')
     timeout = config.getint('Bubbles', 'timeout')
     coaster_center = (coaster_radius, coaster_radius)
-    drawing_size = (2*coaster_radius*mm,2*coaster_radius*mm)
+    drawing_size = (2*coaster_radius*mm, 2*coaster_radius*mm)
 
     outfile.write('<?xml version="1.0"?>')
-    outfile.write('<svg width="%s" height="%s" version="%s">\n' % (drawing_size[0], drawing_size[1],svg_version))
+    outfile.write('<svg width="%s" height="%s" version="%s">\n' %
+                  (drawing_size[0], drawing_size[1], svg_version))
 
     main()
 
